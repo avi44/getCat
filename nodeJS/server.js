@@ -65,7 +65,12 @@ app.get('/getFilesName3', function (req, res) {
                 arrayOfFileName.push(fileName)
             }
         });
-        res.send(arrayOfFileName);
+		if(arrayOfFileName.length==0){
+			res.send("there is no files!")
+		}
+		else{
+			res.send(arrayOfFileName);
+		}
     });
 });
 
@@ -73,12 +78,16 @@ app.post('/postFilesName1', function (req, res) {
     var fileName = req.body.fileName;
     var pathPrefix = "./../webcat/page/";
     var path = pathPrefix+fileName;
-            fs.readFile(path, function(err, files){
-                if (err) return;
+           fs.readFile(path, function(err, files){
+                if (err) return;		
                 $ = cheerio.load(files.toString());
                 var title = $('#title').text();
                 var bom1 = $('.bom1 td').text();
-                var obj = {title:title,link:fileName,bom1:bom1};
+				var imageArray  =[];
+				$("img").each(function (index, element) {
+        imageArray.push($(element).attr("src"));
+				})
+                var obj = {title:title,link:fileName,bom1:bom1,image :imageArray };
                 var dbPath = "./../webcat/db/pagesInfo.js";
                 fs.readFile(dbPath,'utf8', function(err, files1){
                     if (err) return;
@@ -93,8 +102,30 @@ app.post('/postFilesName1', function (req, res) {
                         }
                         res.send("The data was saved!");
                     });
-                });
-        });
+                }); 
+				
+		 fs.readFile(path, 'utf8', function (err,dataArray1) {
+                    if (err) {
+                        return console.log(err);
+                    }
+				var bodyPosition1 = dataArray1.search("</body>");
+                    var untilBody1 = dataArray1.slice(0, bodyPosition1);
+                    var bodyAndNext1 = dataArray1.slice(bodyPosition1);
+                    var scriptHomeAdd0 = "<script src=my script></script>";
+                    var check0 = dataArray1.search(scriptHomeAdd0);
+                    var allScript="";
+                    if(check0==-1) {
+                        allScript += scriptHomeAdd0;
+                    }
+                    if(allScript!=""){
+                        fs.writeFile(path, untilBody1 +allScript+"\n" + bodyAndNext1, function (err) {			
+                            if (err) {
+                                return console.log(err);
+                            }
+                        });
+                    }
+				}) 			
+       });
 });
 
  app.post('/getCatalogFilesName4', function (req, res) {
@@ -102,12 +133,15 @@ app.post('/postFilesName1', function (req, res) {
     var partsCatalog  = req.body.partsCatalog ;
     var path ="./../webcat/"+ catalogNumber+"/"+ partsCatalog;
     fs.readdir(path, function(err, files){
+		if(typeof(files)=="undefined"){
+			res.send("the folder is not exist!")
+			return 
+		}
         if (err) return;
         var arrayOfFileName = [];
         files.forEach(function(fileName) {
             var src = fileName.search(".htm");
             var src1 = fileName.search(".html");
-
             if (fileName != "home.htm" &&(src!=-1 || src1!=-1)){
                 arrayOfFileName.push(fileName)
             }
@@ -146,7 +180,12 @@ app.post('/postFilesName1', function (req, res) {
                 });
             }
         });
-        res.send(arrayOfFileName);
+		if(arrayOfFileName.length==0){
+			res.send("there is no files in catalog "+catalogNumber+"!")
+		}
+		else{
+			res.send(arrayOfFileName);
+		}
     });
 }); 
 
@@ -158,21 +197,23 @@ app.post('/createCatalog', function (req, res) {
     fs.readFile(path, function(err, files){
         if (err) return;
         $ = cheerio.load(files.toString());
-        var title1 = $("a").toArray().map(function(x){
-                   return $(x).text();
-            });
-        var array2 = [];
-        for(var i =0; i<title1.length;i++){
-            if(title1[i].split(" ")[0]!="HOME" && title1[i].split(" ")[0]!="home")
-            array2.push("../../page/"+title1[i].split(" ")[0]+".htm");
-        }
+		var aArray1  =[];
+				$("a").each(function (index, element) {
+				aArray1.push($(element).attr("href"));
+				})
+		var aArray = [];
+		for(var i =0; i<aArray1.length;i++){
+            if(aArray1[i]!="HOME.htm" && aArray1[i]!="home.htm"){
+            aArray.push(aArray1[i]);
+		  }
+          } 
         var dbPath = "./../webcat/db/"+catalogNumber+"Info.js";
         fs.readFile(dbPath,'utf8', function(err, files1){
             if (err) return;
             var db = files1;
             db = db.slice(16,db.length-1);
             db = JSON.parse(db);
-            db = db.concat(array2);
+            db = db.concat(aArray);
             db = JSON.stringify(db);
             fs.writeFile(dbPath, "var linksInfo = "+db +";", function(err) {
                 if(err) {
