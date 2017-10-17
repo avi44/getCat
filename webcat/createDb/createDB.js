@@ -14,11 +14,16 @@ xhttp.send();
 }
  
  function getAndDo(){
-	 intializePageInfoDb(function(){
+	 
 	var xhttp = new XMLHttpRequest();
   	      xhttp.onreadystatechange = function() {
   	  		if (this.readyState == 4 && this.status == 200) {
-  	  			var arrayOfPagesName  = this.responseText;
+				if(this.responseText=="there is no files!"){
+			alert("ther is no files in page folder!")
+			return
+		}
+		  	  			var arrayOfPagesName  = this.responseText;
+		intializePageInfoDb(function(){
                 arrayOfPagesName  = JSON.parse(arrayOfPagesName);
 				 function arrayOfPagesNameLengthState(){
 						var load = arrayOfPagesName.length;
@@ -72,12 +77,14 @@ xhttp.send();
 				}
 				
 			writToFile()
-	
+	})
   	  		}
-  	  	};
+  	  	
+			
+		};
              xhttp.open("GET", "http://localhost:8080/getFilesName3", true);
              xhttp.send();  
-})			 
+		 
  }
  
  
@@ -107,13 +114,19 @@ xhttp.send();
 		checkIfCatIsNull=false;
 	}
 	if(checkIfNumIsNull==false &&  checkIfCatIsNull==false){
-			intializeCatalogInfoDb(catalogNumber,function(){
+			
 	var a =JSON.stringify({catalogNumber :catalogNumber,partsCatalog :partsCatalog});
 	var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-	   var arrayOfPagesName  = JSON.parse(this.responseText);
-	   
+		if(this.responseText[0]!="["){
+			alert(this.responseText);
+			return
+		}
+		var arrayOfPagesName  = JSON.parse(this.responseText);
+		intializeCatalogInfoDb(catalogNumber,function(){
+
+	  			   
 	   function writToFile(){
 				var fileName = 	arrayOfPagesName[0];
 				var xhttp = new XMLHttpRequest();
@@ -140,12 +153,13 @@ xhttp.send();
 				xhttp.send(JSON.stringify({catalogNumber:catalogNumber, partsCatalog:partsCatalog,fileName:fileName}));
 				}
 	   writToFile(); 
+	     })
 	}
   }
   xhttp.open("POST", "http://localhost:8080/getCatalogFilesName4", true);
   xhttp.setRequestHeader("Content-type", "application/json");
   xhttp.send(a);
-   })
+ 
 	}
 	else{
 		if(checkIfNumIsNull!=false){
