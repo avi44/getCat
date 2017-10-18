@@ -1,4 +1,15 @@
 
+function disableButton(id){
+	var button = document.getElementById(id);
+		  button.disabled = true;
+}
+function ableButton(id){
+	var button = document.getElementById(id);
+		  button.disabled = false;
+}
+
+
+
 function intializePageInfoDb(createDb){
 	var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -14,24 +25,25 @@ xhttp.send();
 }
  
  function getAndDo(){
-	 
+	 disableButton("getDataPageBtn");
 	var xhttp = new XMLHttpRequest();
   	      xhttp.onreadystatechange = function() {
   	  		if (this.readyState == 4 && this.status == 200) {
 				if(this.responseText=="there is no files!"){
 			alert("ther is no files in page folder!")
+			ableButton("getDataPageBtn");
 			return
 		}
-		  	  			var arrayOfPagesName  = this.responseText;
-		intializePageInfoDb(function(){
-                arrayOfPagesName  = JSON.parse(arrayOfPagesName);
-				 function arrayOfPagesNameLengthState(){
-						var load = arrayOfPagesName.length;
-						var largeThenHundred = (arrayOfPagesName.length>=100);
-						load = load-(load%100);
-						var load1 =load/100;
-							  return {load:load,load1:load1,largeThenHundred:largeThenHundred};
-				};
+		  	  var arrayOfPagesName  = this.responseText;
+					intializePageInfoDb(function(){
+					arrayOfPagesName  = JSON.parse(arrayOfPagesName);
+					function arrayOfPagesNameLengthState(){
+							var load = arrayOfPagesName.length;
+							var largeThenHundred = (arrayOfPagesName.length>=100);
+							load = load-(load%100);
+							var load1 =load/100;
+								return {load:load,load1:load1,largeThenHundred:largeThenHundred};
+					};
 				var load = arrayOfPagesNameLengthState().load;
 				var load1 = arrayOfPagesNameLengthState().load1;
 				var largeThenHundred =arrayOfPagesNameLengthState().largeThenHundred;
@@ -66,7 +78,8 @@ xhttp.send();
 											graf1.style.background = "none";
 											per.style.marginLeft = 0;
 											per.innerHTML = "";
-											},1300);
+											ableButton("getDataPageBtn");
+											},600);
 								}
 							}
 					}
@@ -103,6 +116,7 @@ xhttp.send();
 }
  
  function getPagesCatalogName(){
+	 disableButton("getDataCatalogBtn");
 	 var catalogNumber = document.getElementById("catalogNumber").value;
 	var partsCatalog = document.getElementById("partsCatalog").value;
 	var checkIfNumIsNull= true;
@@ -121,6 +135,7 @@ xhttp.send();
     if (this.readyState == 4 && this.status == 200) {
 		if(this.responseText[0]!="["){
 			alert(this.responseText);
+			ableButton("getDataCatalogBtn");
 			return
 		}
 		var arrayOfPagesName  = JSON.parse(this.responseText);
@@ -144,6 +159,7 @@ xhttp.send();
 									var partsCatalog1 = document.getElementById("partsCatalog");
 									catalogNumber1.value = "";
 									partsCatalog1.value = "";
+									ableButton("getDataCatalogBtn");
 						}
 						}
 					}
@@ -164,9 +180,11 @@ xhttp.send();
 	else{
 		if(checkIfNumIsNull!=false){
 		alert("catalog number is empty!")
+		ableButton("getDataCatalogBtn");
 	}
 		else{
 			alert("Parts Catalog is empty!")
+			ableButton("getDataCatalogBtn");
 		}
 	}
 
