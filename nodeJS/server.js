@@ -111,7 +111,7 @@ app.post('/postFilesName1', function (req, res) {
 				var bodyPosition1 = dataArray1.search("</body>");
                     var untilBody1 = dataArray1.slice(0, bodyPosition1);
                     var bodyAndNext1 = dataArray1.slice(bodyPosition1);
-                    var scriptHomeAdd0 = "<script src=my script></script>";
+                    var scriptHomeAdd0 = "<script src=\"my script\"></script>";
                     var check0 = dataArray1.search(scriptHomeAdd0);
                     var allScript="";
                     if(check0==-1) {
