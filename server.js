@@ -158,7 +158,7 @@ app.post('/postFilesName1', function (req, res) {
             if ( src!=-1 || src1!=-1){
                 arrayOfFileName.push(fileName)
             }
-			else if(fileName == "home.htm"){
+			 if(fileName == "home.htm"){
 				var com = path +"/"+ fileName
                 fs.readFile(com, 'utf8', function (err,dataArray1) {
                     if (err) {
