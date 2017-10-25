@@ -169,9 +169,11 @@ app.post('/postFilesName1', function (req, res) {
                     var bodyAndNext1 = dataArray1.slice(bodyPosition1);
                     var scriptHomeAdd0 = "<script src=\"./../shared/db/pagesInfo.js\"></script>";
                     var scriptHomeAdd1 = "<script src=\"./../shared/db/"+catalogNumber +"info.js\"></script>";
+                    var scriptHomeAdd2 = "<script src=\"./../shared/db/sharedInfo.js\"></script>";
                     var scriptHomeAdd3 = "<script src=\"./../shared/Script/hpSearch.js\"></script>";
                     var check0 = dataArray1.search(scriptHomeAdd0);
                     var check1 = dataArray1.search(scriptHomeAdd1);
+                    var check2 = dataArray1.search(scriptHomeAdd2);
                     var check3 = dataArray1.search(scriptHomeAdd3);
                     var allScript="";
                     if(check0==-1) {
@@ -179,6 +181,9 @@ app.post('/postFilesName1', function (req, res) {
                     }
                     if(check1==-1) {
                         allScript += "\n"+scriptHomeAdd1;
+                    }
+			 if(check2==-1) {
+                        allScript += "\n"+scriptHomeAdd2;
                     }
                     if(check3==-1){
                         allScript+= "\n"+scriptHomeAdd3;
